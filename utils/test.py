@@ -1,5 +1,5 @@
 import torch
-import tqdm
+from tqdm import tqdm
 
 def test(model : torch.nn.Module, dataLoader : torch.utils.data.DataLoader, curStep : int, latentDim : int, device, writer=None):
     """
@@ -24,7 +24,7 @@ def test(model : torch.nn.Module, dataLoader : torch.utils.data.DataLoader, curS
             data = data.view(data.size(0), -1)
             
             # Forward pass
-            output = model(data, compute_loss=True)
+            output = model(data, calcLoss=True)
 
             testLoss += output.loss.item()
             testReconstLoss += output.lossReconst.item()

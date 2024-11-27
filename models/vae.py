@@ -4,7 +4,7 @@ import torch.nn as nn
 from models.VAEOutput import VAEOutput
 
 class VAE(nn.Module):
-    def __init__(self, inputDim : int=784, hiddenDim : int=400, latentDim : int=32):
+    def __init__(self, inputDim : int=784, hiddenDim : int=512, latentDim : int=64):
         """
         Class for our Variational Autoencoder (VAE).
         Args:
@@ -26,9 +26,9 @@ class VAE(nn.Module):
             nn.SiLU(),
             nn.Linear(hiddenDim // 4, hiddenDim // 8),
             nn.SiLU(),
-            nn.Linear(hiddenDim, 2 * latentDim) # 2 for mean and variance (log var)
+            nn.Linear(hiddenDim // 8, 2 * latentDim) # 2 for mean and variance (log var)
         )
-        self.softPlus = nn.Softplus
+        self.softPlus = nn.Softplus()
 
         # Define decoder model
         self.decoder = nn.Sequential(
@@ -44,7 +44,7 @@ class VAE(nn.Module):
             nn.Sigmoid()
         )
 
-    def encode(self, x : torch.Tensor, epsilon : float) -> torch.distributions.MultivariateNormal:
+    def encode(self, x : torch.Tensor, epsilon : float = 1e-8) -> torch.distributions.MultivariateNormal:
         """
         Used to encode the data into the latent space.
         Args:

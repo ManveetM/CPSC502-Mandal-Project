@@ -1,5 +1,6 @@
 import torch
 from utils.data import batchSize
+from tqdm import tqdm
 
 # Train function
 def train(model : torch.nn.Module, dataLoader : torch.utils.data.DataLoader, optimizer, prevUpdates, device, writer=None):
@@ -9,6 +10,7 @@ def train(model : torch.nn.Module, dataLoader : torch.utils.data.DataLoader, opt
         model: Model to train.
         dataLoader: Dataset.
         optimizer: The optimizer.
+        prevUpdates: Updates from previous run.
         device: The device we want to run on.
     """
     model.train()
@@ -35,15 +37,14 @@ def train(model : torch.nn.Module, dataLoader : torch.utils.data.DataLoader, opt
                 totalNorm += paramNorm.item() ** 2
             totalNorm = totalNorm ** (1.0 / 2.0)
 
-            print(f'Step: {update:,} (N samples: {update*batchSize:,}), Loss: {loss.item():.4f}, 
-                  KL: {output.lossKL.item():.4f} Grad: {totalNorm:.4f}')
+            print(f'Step {update:,} (N samples: {update*batchSize:,}), Loss: {loss.item():.4f} (Recon: {output.lossReconst.item():.4f}), KL: {output.lossKL.item():.4f} Grad: {totalNorm:.4f}')
             
             if writer:
                 step = update
                 writer.add_scalar('Loss/Train', loss.item(), step)
                 writer.add_scalar('Loss/Train/BCE', output.lossReconst.item(), step)
                 writer.add_scalar('Loss/Train/KL', output.lossKL.item(), step)
-                writer.add_scaler('Grad/Norm/Train', totalNorm, step)
+                writer.add_scalar('Grad/Norm/Train', totalNorm, step)
             
         # Gradient clipping to prevent exploding gradient
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
