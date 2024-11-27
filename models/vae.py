@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from VAEOutput import VAEOutput
+from models.VAEOutput import VAEOutput
 
 class VAE(nn.Module):
     def __init__(self, inputDim : int=784, hiddenDim : int=400, latentDim : int=32):
@@ -19,13 +19,13 @@ class VAE(nn.Module):
             # First we gradually decrease the input dimensionality of our data
             # We use the Swish (SiLU) activation function for better peformance
             nn.Linear(inputDim, hiddenDim),
-            nn.SiLU, 
+            nn.SiLU(), 
             nn.Linear(hiddenDim, hiddenDim // 2),
-            nn.SiLU,
+            nn.SiLU(),
             nn.Linear(hiddenDim // 2, hiddenDim // 4),
-            nn.SiLU,
+            nn.SiLU(),
             nn.Linear(hiddenDim // 4, hiddenDim // 8),
-            nn.SiLU,
+            nn.SiLU(),
             nn.Linear(hiddenDim, 2 * latentDim) # 2 for mean and variance (log var)
         )
         self.softPlus = nn.Softplus
@@ -33,15 +33,15 @@ class VAE(nn.Module):
         # Define decoder model
         self.decoder = nn.Sequential(
             nn.Linear(latentDim, hiddenDim // 8),
-            nn.SiLU,
+            nn.SiLU(),
             nn.Linear(hiddenDim // 8, hiddenDim // 4),
-            nn.SiLU,
+            nn.SiLU(),
             nn.Linear(hiddenDim // 4, hiddenDim // 2),
-            nn.SiLU,
+            nn.SiLU(),
             nn.Linear(hiddenDim // 2, hiddenDim),
-            nn.SiLU,
+            nn.SiLU(),
             nn.Linear(hiddenDim, inputDim),
-            nn.Sigmoid
+            nn.Sigmoid()
         )
 
     def encode(self, x : torch.Tensor, epsilon : float) -> torch.distributions.MultivariateNormal:
