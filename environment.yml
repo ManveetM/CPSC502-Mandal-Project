@@ -1,0 +1,10 @@
+name: 502RP
+channels:
+  - defaults
+dependencies:
+  - pytorch
+  - torchvision
+  - numpy
+  - gh
+  - conda-forge::tensorboard
+  - tqdm

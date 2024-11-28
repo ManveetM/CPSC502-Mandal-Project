@@ -4,7 +4,7 @@ import torch.nn as nn
 from models.VAEOutput import VAEOutput
 
 class VAE(nn.Module):
-    def __init__(self, inputDim : int=784, hiddenDim : int=512, latentDim : int=64):
+    def __init__(self, inputDim : int=784, hiddenDim : int=512, latentDim : int=32):
         """
         Class for our Variational Autoencoder (VAE).
         Args:
